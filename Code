@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameHub - Ultimate Multi Gaming Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root {
+            --bg-grad-1: #0c0c0c;
+            --bg-grad-2: #1a1a2e;
+            --bg-grad-3: #16213e;
+            --text-main: #ffffff;
+            --text-muted: #aaaaaa;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --card-hover: rgba(255, 255, 255, 0.1);
+            --modal-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --header-bg: rgba(0, 0, 0, 0.9);
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --accent-1: #ff6b6b;
+            --accent-2: #4ecdc4;
+            --accent-gold: #ffd700;
+        }
+
+        [data-theme="light"] {
+            --bg-grad-1: #f0f2f5;
+            --bg-grad-2: #e4e9f0;
+            --bg-grad-3: #ffffff;
+            --text-main: #1a1a2e;
+            --text-muted: #555555;
+            --card-bg: rgba(0, 0, 0, 0.05);
+            --card-border: rgba(0, 0, 0, 0.1);
+            --card-hover: rgba(0, 0, 0, 0.08);
+            --modal-bg: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
+            --header-bg: rgba(255, 255, 255, 0.95);
+            --input-bg: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 50%, var(--bg-grad-3) 100%);
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        header { background: var(--header-bg); padding: 1rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 1px solid var(--card-border); transition: background 0.5s ease; }
+        nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .logo { font-size: 2rem; font-weight: bold; background: linear-gradient(45deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; list-style: none; gap: 2rem; align-items: center; }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent-2); }
+        .theme-toggle { cursor: pointer; font-size: 1.2rem; color: var(--text-main); transition: 0.3s; }
+        .theme-toggle:hover { color: var(--accent-2); transform: rotate(15deg); }
+        .login-btn { background: linear-gradient(45deg, var(--accent-2), #45b7d1); padding: 8px 20px; border-radius: 20px; color: #1a1a2e; font-weight: bold; cursor: pointer; border: none; transition: 0.3s; }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4); }
+        .admin-btn { display: none; background: #ff4757; padding: 8px 15px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; border: none; }
+        .user-profile { display: none; align-items: center; gap: 10px; cursor: pointer; background: var(--card-bg); padding: 5px 15px 5px 5px; border-radius: 30px; }
+        .user-avatar { width: 35px; height: 35px; background: var(--accent-1); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .logout-btn { color: var(--accent-1); cursor: pointer; }
+
+        /* --- HERO SECTION --- */
+        .hero { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; padding-top: 80px; }
+        .hero-content h1 { font-size: 4rem; margin-bottom: 1rem; text-shadow: 0 0 20px rgba(78, 205, 196, 0.5); }
+        .cta-button { display: inline-block; padding: 15px 40px; background: linear-gradient(45deg, var(--accent-1), var(--accent-2)); color: #fff; text-decoration: none; border-radius: 50px; font-weight: bold; margin: 20px 10px; border: none; cursor: pointer; }
+
+        /* --- GAMES SECTION --- */
+        .games-section { padding: 100px 2rem; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 3rem; margin-bottom: 2rem; background: linear-gradient(45deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .category-tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
+        .tab-btn { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-main); padding: 10px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .tab-btn.active, .tab-btn:hover { background: var(--accent-2); color: #1a1a2e; }
+
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .game-card { background: var(--card-bg); border-radius: 20px; padding: 2rem; text-align: center; border: 1px solid var(--card-border); position: relative; transition: 0.4s; overflow: hidden;}
+        .game-card.launcher { border: 1px solid var(--accent-gold); }
+        .game-card.launcher::before { content: 'LAUNCHER'; position: absolute; top: 10px; right: -30px; background: var(--accent-gold); color: #000; font-size: 0.7rem; font-weight: bold; padding: 5px 30px; transform: rotate(45deg); }
+        .game-card:hover { transform: translateY(-10px); background: var(--card-hover); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        .game-icon { font-size: 4rem; margin-bottom: 1rem; background: linear-gradient(45deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .game-card.pubg .game-icon { background: linear-gradient(45deg, #f39c12, #e67e22); -webkit-background-clip: text;}
+        .game-card.freefire .game-icon { background: linear-gradient(45deg, #e74c3c, #c0392b); -webkit-background-clip: text;}
+        .game-card.coc .game-icon { background: linear-gradient(45deg, #f1c40f, #e67e22); -webkit-background-clip: text;}
+        .game-card.cricket .game-icon { background: linear-gradient(45deg, #2ecc71, #27ae60); -webkit-background-clip: text;}
+
+        /* --- MODALS --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--modal-bg); width: 100%; max-width: 400px; border-radius: 20px; padding: 2rem; position: relative; border: 1px solid var(--card-border); }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-main); cursor: pointer; }
+        
+        .input-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
+        .input-group input { padding: 12px; border-radius: 8px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-main); outline: none; }
+        
+        .auth-tabs { display: flex; margin-bottom: 2rem; border-bottom: 1px solid var(--card-border); }
+        .auth-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: bold; color: var(--text-muted); }
+        .auth-tab.active { color: var(--accent-2); border-bottom: 2px solid var(--accent-2); }
+        .auth-form { display: none; flex-direction: column; }
+        .auth-form.active { display: flex; }
+
+        /* --- MULTI-GAME OVERLAY --- */
+        .game-screen-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
+        .game-screen-overlay.active { opacity: 1; pointer-events: auto; }
+        .game-header { width: 100%; max-width: 800px; display: flex; justify-content: space-between; padding: 15px; background: #1a1a2e; border-radius: 10px 10px 0 0; color: white;}
+        #gameCanvas { background: #2c3e50; border: 2px solid var(--accent-2); max-width: 100%; border-radius: 0 0 10px 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">GameHub</div>
+            <ul class="nav-links">
+                <li><a href="#games">Play</a></li>
+                <li><i class="fas fa-moon theme-toggle" onclick="toggleTheme()" id="themeIcon"></i></li>
+                <li id="loginNavBtn"><button class="login-btn" onclick="openModal('authModal')">Login</button></li>
+                <li id="userProfileNav" class="user-profile">
+                    <div class="user-avatar" id="avatarLetter">U</div>
+                    <span id="usernameDisplay">User</span>
+                    <i class="fas fa-sign-out-alt logout-btn" onclick="logout()" title="Logout"></i>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-content">
+            <i class="fas fa-times close-modal" onclick="closeModal('authModal')"></i>
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">Register</div>
+            </div>
+            <form id="loginForm" class="auth-form active" onsubmit="handleAuth(event, 'login')">
+                <div class="input-group"><label style="color:var(--text-muted)">Username</label><input type="text" id="loginUser" required placeholder="Gamer"></div>
+                <div class="input-group"><label style="color:var(--text-muted)">Password</label><input type="password" required placeholder="••••••••"></div>
+                <button type="submit" class="login-btn" style="width:100%; margin-top:10px;">Login</button>
+            </form>
+            <form id="registerForm" class="auth-form" onsubmit="handleAuth(event, 'register')">
+                <div class="input-group"><label style="color:var(--text-muted)">Username</label><input type="text" id="regUser" required></div>
+                <button type="submit" class="login-btn" style="width:100%; margin-top:10px;">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Game Overlay Canvas -->
+    <div class="game-screen-overlay" id="gameOverlay">
+        <div class="game-header">
+            <h2 id="activeGameTitle" style="color: var(--accent-2);">Game</h2>
+            <div>
+                <span id="gameStats" style="margin-right: 20px; font-weight: bold;">Score: <span id="gameScore">0</span></span>
+                <button class="admin-btn" style="display:inline-block; background: #ff6b6b;" onclick="quitGame()">Exit Game</button>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
+        <p id="gameHint" style="color:#fff; margin-top:15px; font-size: 1.2rem; font-weight: bold;"></p>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Level Up Your Reality</h1>
+            <p style="color: var(--text-muted); font-size: 1.2rem; margin-bottom: 2rem;">Play HTML5 Web Games or Launch Major Titles directly.</p>
+            <a href="#games" class="cta-button">Explore Library</a>
+        </div>
+    </section>
+
+    <!-- Games Section -->
+    <section id="games" class="games-section">
+        <h2 class="section-title">Games Library</h2>
+        
+        <div class="category-tabs">
+            <button class="tab-btn active" onclick="filterGames('all')">All Games</button>
+            <button class="tab-btn" onclick="filterGames('web')">Playable Web Games</button>
+            <button class="tab-btn" style="border-color: var(--accent-gold);" onclick="filterGames('launcher')">Heavy Launchers</button>
+        </div>
+
+        <div class="games-grid">
+            <!-- PLAYABLE WEB GAMES -->
+            <div class="game-card cricket" data-category="web">
+                <div class="game-icon"><i class="fas fa-baseball-ball"></i></div>
+                <h3 style="color:var(--text-main)">T20 Cricket Bash</h3>
+                <p style="color:var(--text-muted); margin: 10px 0;">Timing is everything. Hit sixes, avoid getting bowled!</p>
+                <button class="login-btn" style="width:100%" onclick="initGame('cricket')">Play Mini-Game</button>
+            </div>
+            
+            <div class="game-card" data-category="web">
+                <div class="game-icon"><i class="fas fa-ghost"></i></div>
+                <h3 style="color:var(--text-main)">Cyber Snake</h3>
+                <p style="color:var(--text-muted); margin: 10px 0;">Classic snake. Use Arrow keys to eat grid food.</p>
+                <button class="login-btn" style="width:100%" onclick="initGame('snake')">Play Mini-Game</button>
+            </div>
+
+            <!-- HEAVY LAUNCHERS (Simulated) -->
+            <div class="game-card launcher pubg" data-category="launcher">
+                <div class="game-icon"><i class="fas fa-parachute-box"></i></div>
+                <h3 style="color:var(--text-main)">PUBG: Battlegrounds</h3>
+                <p style="color:var(--text-muted); margin: 10px 0;">Drop in, loot up, survive. 100 player battle royale.</p>
+                <button class="login-btn" style="width:100%; background: #f39c12; color:#fff;" onclick="launchExternalGame('PUBG')"><i class="fas fa-external-link-alt"></i> Launch Game</button>
+            </div>
+
+            <div class="game-card launcher freefire" data-category="launcher">
+                <div class="game-icon"><i class="fas fa-fire"></i></div>
+                <h3 style="color:var(--text-main)">Garena Free Fire</h3>
+                <p style="color:var(--text-muted); margin: 10px 0;">Fast-paced 50 player survival shooter.</p>
+                <button class="login-btn" style="width:100%; background: #e74c3c; color:#fff;" onclick="launchExternalGame('Free Fire')"><i class="fas fa-external-link-alt"></i> Launch Game</button>
+            </div>
+
+            <div class="game-card launcher coc" data-category="launcher">
+                <div class="game-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3 style="color:var(--text-main)">Clash of Clans</h3>
+                <p style="color:var(--text-muted); margin: 10px 0;">Build your village, raise a clan, and compete in epic Clan Wars!</p>
+                <button class="login-btn" style="width:100%; background: #f1c40f; color:#000;" onclick="launchExternalGame('Clash of Clans')"><i class="fas fa-external-link-alt"></i> Launch Game</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // --- THEME & UI LOGIC ---
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            if (body.getAttribute('data-theme') === 'light') {
+                body.removeAttribute('data-theme');
+                icon.className = 'fas fa-moon theme-toggle';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                icon.className = 'fas fa-sun theme-toggle';
+            }
+        }
+
+        function filterGames(category) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const cards = document.querySelectorAll('.game-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // --- AUTH LOGIC ---
+        let isLoggedIn = false;
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function switchAuthTab(type) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(type+'Form').classList.add('active');
+        }
+
+        function handleAuth(e, type) {
+            e.preventDefault();
+            const user = type === 'login' ? document.getElementById('loginUser').value : document.getElementById('regUser').value;
+            isLoggedIn = true;
+            document.getElementById('usernameDisplay').textContent = user;
+            document.getElementById('avatarLetter').textContent = user.charAt(0).toUpperCase();
+            document.getElementById('loginNavBtn').style.display = 'none';
+            document.getElementById('userProfileNav').style.display = 'flex';
+            closeModal('authModal');
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            document.getElementById('loginNavBtn').style.display = 'block';
+            document.getElementById('userProfileNav').style.display = 'none';
+        }
+
+        // --- EXTERNAL LAUNCHER SIMULATOR ---
+        function launchExternalGame(gameName) {
+            if (!isLoggedIn) { alert("Please login to launch games!"); openModal('authModal'); return; }
+            alert(`[System Simulator]\nInitializing launcher for ${gameName}...\nChecking for updates...\n\n(In a real desktop app, this would open the game executable!)`);
+        }
+
+        // --- MULTI-GAME ENGINE (CANVAS) ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let gameLoopId;
+        let score = 0;
+        
+        const keys = {};
+        window.addEventListener('keydown', e => keys[e.key] = true);
+        window.addEventListener('keyup', e => keys[e.key] = false);
+
+        function initGame(gameType) {
+            if (!isLoggedIn) { alert("Please login to play web games!"); openModal('authModal'); return; }
+            
+            document.getElementById('gameOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            score = 0;
+            document.getElementById('gameScore').textContent = score;
+            document.getElementById('gameStats').innerHTML = `Score: <span id="gameScore">0</span>`; // Reset stats UI
+            
+            if(gameLoopId) cancelAnimationFrame(gameLoopId);
+            
+            if(gameType === 'cricket') {
+                document.getElementById('activeGameTitle').textContent = "T20 Cricket Bash";
+                document.getElementById('gameHint').textContent = "Press SPACEBAR when the ball reaches the crease to bat!";
+                startCricket();
+            } else if(gameType === 'snake') {
+                document.getElementById('activeGameTitle').textContent = "Cyber Snake";
+                document.getElementById('gameHint').textContent = "Use Arrow Keys to move";
+                startSnake();
+            }
+        }
+
+        function quitGame() {
+            document.getElementById('gameOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            cancelAnimationFrame(gameLoopId);
+        }
